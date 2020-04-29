@@ -1,26 +1,34 @@
-import { NowRequest, NowResponse } from '@now/node';
-import querystring from 'querystring';
-import axios from 'axios';
-import uid from 'uid-promise';
-
 // You must set these env vars in your Vercel:
 // GH_CLIENT_ID
 // GH_CLIENT_SECRET
 // USER_REDIRECT_URL
 
+// There could be a success redirect to a vercel static page, with the error or success message
+// in the body, and the axios would send to the user the token or error.
+// Not willing to do it right now. Maybe later. Probably not.
+
+
+import { NowRequest, NowResponse } from '@now/node';
+import querystring from 'querystring';
+import axios from 'axios';
+import uid from 'uid-promise';
+
+
 const githubUrl = process.env.GH_HOST || 'github.com';
 const userRedirect = process.env.USER_REDIRECT_URL || 'https://www.google.com';
 
-
-function redirect(res: NowResponse, location: string, body: any) {
-  res.setHeader('Location', location);
-  res.json(body);
-}
 
 // If needed, the states array could also have a port or a full redirect uri,
 // allowing users to set custom ports to localhost, for example;
 const states: string[] = [];
 const statesMaxLength = 10000; // A big number.
+
+
+
+function redirect(res: NowResponse, location: string, body: any) {
+  res.setHeader('Location', location);
+  res.send(body);
+}
 
 function redirectToUser(res: NowResponse, body: any) {
   redirect(res, userRedirect, body);
@@ -46,6 +54,8 @@ async function login(req: NowRequest, res: NowResponse) {
 
   redirect(res, `https://${githubUrl}/login/oauth/authorize`, query);
 };
+
+
 
 async function callback(req: NowRequest, res: NowResponse) {
   // res.setHeader('Content-Type', 'text/html');
@@ -74,7 +84,7 @@ async function callback(req: NowRequest, res: NowResponse) {
         if (qs.error) {
           redirectToUser(res, { error: qs.error_description });
         } else {
-          redirectToUser(res, { token: qs.access_token });
+          redirectToUser(res, { access_token: qs.access_token });
         }
       } else {
         redirectToUser(res, { error: 'GitHub server error.' });
