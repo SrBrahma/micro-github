@@ -17,7 +17,8 @@ function redirect(res: NowResponse, location: string, body: any) {
   res.send(body);
 }
 
-
+// If needed, the states array could also have a port or a full redirect uri,
+// allowing users to set custom ports to localhost, for example;
 const states: string[] = [];
 const statesMaxLength = 10000; // A big number.
 
