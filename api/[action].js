@@ -1,17 +1,16 @@
-require('dotenv').config()
 const querystring = require('querystring');
 const axios = require('axios');
 const redirect = require('micro-redirect');
 const uid = require('uid-promise');
 
-const githubUrl = process.env.GH_HOST || 'github.com'
+const githubUrl = process.env.GH_HOST || 'github.com';
 
 const states = [];
 
 const redirectWithQueryString = (res, data) => {
-  const location = `${process.env.REDIRECT_URL}?${querystring.stringify(data)}`
-  redirect(res, 302, location)
-}
+  const location = `${process.env.REDIRECT_URL}?${querystring.stringify(data)}`;
+  redirect(res, 302, location);
+};
 
 const login = async (req, res) => {
   const state = await uid(20);
@@ -28,13 +27,13 @@ const login = async (req, res) => {
 
 const callback = async (req, res) => {
 
-  res.setHeader('Content-Type', 'text/html')
-  const { code, state } = req.query
+  res.setHeader('Content-Type', 'text/html');
+  const { code, state } = req.query;
 
   if (!code && !state) {
-    redirectWithQueryString(res, { error: 'Provide code and state query param' })
+    redirectWithQueryString(res, { error: 'Provide code and state query param' });
   } else if (!states.includes(state)) {
-    redirectWithQueryString(res, { error: 'Unknown state' })
+    redirectWithQueryString(res, { error: 'Unknown state' });
   } else {
     states.splice(states.indexOf(state), 1);
     try {
@@ -47,31 +46,31 @@ const callback = async (req, res) => {
           client_secret: process.env.GH_CLIENT_SECRET,
           code
         }
-      })
+      });
 
       if (status === 200) {
-        const qs = querystring.parse(data)
+        const qs = querystring.parse(data);
         if (qs.error) {
-          redirectWithQueryString(res, { error: qs.error_description })
+          redirectWithQueryString(res, { error: qs.error_description });
         } else {
-          redirectWithQueryString(res, { access_token: qs.access_token })
+          redirectWithQueryString(res, { access_token: qs.access_token });
         }
       } else {
-        redirectWithQueryString(res, { error: 'GitHub server error.' })
+        redirectWithQueryString(res, { error: 'GitHub server error.' });
       }
     } catch (err) {
-      redirectWithQueryString(res, { error: 'Please provide GH_CLIENT_ID and GH_CLIENT_SECRET as environment variables. (or GitHub might be down)' })
+      redirectWithQueryString(res, { error: 'Please provide GH_CLIENT_ID and GH_CLIENT_SECRET as environment variables. (or GitHub might be down)' });
     }
   }
-}
+};
 
 // api/[action].js
 // https://micro-github.*USERNAME*.now.sh/api/login
 // https://micro-github.*USERNAME*.now.sh/api/callback
 module.exports = (req, res) => {
-  if(req.query.action === "login"){
+  if (req.query.action === "login") {
     login(req, res);
-  }else if(req.query.action === "callback"){
+  } else if (req.query.action === "callback") {
     callback(req, res);
   }
-}
+};
