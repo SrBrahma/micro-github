@@ -14,7 +14,7 @@ const userRedirect = process.env.USER_REDIRECT_URL || 'https://www.google.com';
 
 function redirect(res: NowResponse, location: string, body: any) {
   res.setHeader('Location', location);
-  res.send(body);
+  res.json(body);
 }
 
 // If needed, the states array could also have a port or a full redirect uri,
