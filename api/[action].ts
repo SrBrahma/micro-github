@@ -7,7 +7,7 @@
 // in the body, and the axios would send to the user the token or error.
 // Not willing to do it right now. Maybe later. Probably not.
 
-
+require('dotenv').config(); // dotEnv used on development mode, getting the env vars from .env file.
 import { NowRequest, NowResponse } from '@now/node';
 import querystring from 'querystring';
 import axios from 'axios';
@@ -25,13 +25,17 @@ const statesMaxLength = 10000; // A big number.
 
 
 
-function redirect(res: NowResponse, location: string, body: any) {
-  res.setHeader('Location', location);
-  res.send(body);
+function redirect(res: NowResponse, location: string, bodyObj?: any) {
+  res.status(302);
+  if (bodyObj)
+    res.setHeader('Location', `${location}?${querystring.stringify(bodyObj)}`);
+  else
+    res.setHeader('Location', location);
+  res.send('');
 }
 
-function redirectToUser(res: NowResponse, body?: any) {
-  redirect(res, userRedirect, body);
+function redirectToUser(res: NowResponse, bodyObj?: any) {
+  redirect(res, userRedirect, bodyObj);
 };
 
 async function login(req: NowRequest, res: NowResponse) {
@@ -84,8 +88,7 @@ async function callback(req: NowRequest, res: NowResponse) {
         if (qs.error) {
           redirectToUser(res, { error: qs.error_description });
         } else {
-          res.setHeader('Authentication', qs.access_token!);
-          redirectToUser(res);
+          redirectToUser(res, { access_token: qs.access_token });
         }
       } else {
         redirectToUser(res, { error: 'GitHub server error.' });
