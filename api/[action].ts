@@ -88,7 +88,7 @@ async function callback(req: NowRequest, res: NowResponse) {
         if (qs.error) {
           redirectToUser(res, { error: qs.error_description });
         } else {
-          redirectToUser(res, { access_token: qs.access_token });
+          redirectToUser(res, { token: qs.access_token });
         }
       } else {
         redirectToUser(res, { error: 'GitHub server error.' });
