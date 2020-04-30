@@ -30,7 +30,7 @@ function redirect(res: NowResponse, location: string, body: any) {
   res.send(body);
 }
 
-function redirectToUser(res: NowResponse, body: any) {
+function redirectToUser(res: NowResponse, body?: any) {
   redirect(res, userRedirect, body);
 };
 
@@ -84,7 +84,8 @@ async function callback(req: NowRequest, res: NowResponse) {
         if (qs.error) {
           redirectToUser(res, { error: qs.error_description });
         } else {
-          redirectToUser(res, { access_token: qs.access_token });
+          res.setHeader('Authentication', qs.access_token!);
+          redirectToUser(res);
         }
       } else {
         redirectToUser(res, { error: 'GitHub server error.' });
