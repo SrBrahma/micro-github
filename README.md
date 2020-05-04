@@ -1,5 +1,21 @@
 # `micro-github`
 
+# SrBrahma fork:
+
+My Typescript fork with some changes from a another fork (https://github.com/zalo/micro-github-1) that updates the repository micro-github (https://github.com/mxstbr/micro-github). It OAuth'enticates GitHub users, retrieving a token.
+
+It also hardcodes the scope parameter, so malicious applications that have access to the user machine can't mistake him under your application name to get further authorizations.
+
+Note that I wasn't able to run the now cli. Had to setup it on Vercel website.
+
+## Future:
+
+Always reset authorization on auth and Delete command.
+https://developer.github.com/v3/apps/oauth_applications/#check-a-token
+(https://developer.github.com/changes/2020-02-14-deprecating-oauth-app-endpoint/)
+
+# README.md from forked repository
+
 A tiny microservice that makes adding authentication with GitHub to your application easy.
 
 ## Usage

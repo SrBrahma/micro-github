@@ -21,9 +21,13 @@ const userRedirect = process.env.USER_REDIRECT_URL || 'https://www.google.com';
 // If needed, the states array could also have a port or a full redirect uri,
 // allowing users to set custom ports to localhost, for example;
 const states: string[] = [];
-const statesMaxLength = 10000; // A big number.
+const statesMaxLength = 10000; // A big number. May be changed.
 
-
+// https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/
+// "Note: Your OAuth App can request the scopes in the initial redirection. You can specify multiple
+// scopes by separating them with a space".
+// Mutiple scope example: 'repo gist'
+const scope = 'repo';
 
 function redirect(res: NowResponse, location: string, bodyObj?: any) {
   res.status(302);
@@ -46,13 +50,13 @@ async function login(req: NowRequest, res: NowResponse) {
     states.shift();
 
   states.push(state);
-  const { scope, allow_signup } = req.query;
+  const { allow_signup } = req.query;
   const query = {
     client_id: process.env.GH_CLIENT_ID,
-    state: state
+    state,
+    scope
   } as any;
-  if (scope)
-    query.scope = scope;
+
   if (allow_signup !== undefined)
     query.allow_signup = allow_signup;
 
