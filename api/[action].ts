@@ -18,6 +18,8 @@ const scope = 'repo';
 // state format is uidString_customRedirectPort.
 // We store the redirect port with the state to use less Vercel computation power (to
 // use indexOf instead of findIndex. It is way faster.)
+// If someday this stops working, maybe wouldn't be a problem to always trust the received state.
+// Don't see a security issue with this, for now.
 const states: string[] = [];
 const statesMaxLength = 10000; // A big number. May be changed.
 
@@ -31,13 +33,18 @@ function redirect(res: NowResponse, location: string, bodyObj?: any) {
 
 
 function redirectToUser(res: NowResponse, bodyObj: any, port: number) {
-  redirect(res, `http://localhost:${port}`, bodyObj);
+  //TODO: After ~15 jun, remove the '/oauthCallback'.
+  redirect(res, `http://localhost:${port}/oauthCallback`, bodyObj);
 };
 
 
 
 async function login(req: NowRequest, res: NowResponse) {
-  const { redirectPort: redirectPortString } = req.query;
+  let { redirectPort: redirectPortString } = req.query;
+
+  //TODO: Remove this after ~15 jun. Is just a "migration". And change above to const.
+  if (!redirectPortString)
+    redirectPortString = "60002";
 
   let redirectPort = Number(redirectPortString); // If undefined, returns NaN
 
