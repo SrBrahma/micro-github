@@ -18,12 +18,20 @@ const scope = 'repo';
 // state format is uidString_customRedirectPort.
 // We store the redirect port with the state to use less Vercel computation power (to
 // use indexOf instead of findIndex. It is way faster.)
+
 // If someday this stops working, maybe wouldn't be a problem to always trust the received state.
-// Don't see a security issue with this, for now.
+// Don't see a security issue with this, at the current moment.
+
+// For additional security, it could be KEY_CRYPTO,
+// where the key would still be a random value, and crypto a value generated using the key and a Env secret.
+// Maybe doesn't make sense, as the toGithub redirect contains the state, and the user could always use this
+// state. Use a Date()?
 const states: string[] = [];
 const statesMaxLength = 10000; // A big number. May be changed.
 
 
+console.log(process.env.GH_CLIENT_ID);
+console.log(process.env.GH_CLIENT_SECRET);
 
 function redirect(res: NowResponse, location: string, bodyObj?: any) {
   res.status(302);
