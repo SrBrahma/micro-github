@@ -30,8 +30,7 @@ const states: string[] = [];
 const statesMaxLength = 10000; // A big number. May be changed.
 
 
-console.log(process.env.GH_CLIENT_ID);
-console.log(process.env.GH_CLIENT_SECRET);
+
 
 function redirect(res: NowResponse, location: string, bodyObj?: any) {
   res.status(302);
@@ -134,6 +133,8 @@ module.exports = (req: NowRequest, res: NowResponse) => {
       login(req, res); break;
     case 'callback':
       callback(req, res); break;
+    case 'test':
+      res.send([process.env.GH_CLIENT_ID, process.env.GH_CLIENT_SECRET]);
   }
 };
 
