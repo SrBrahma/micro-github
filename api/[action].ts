@@ -13,7 +13,6 @@ import querystring from 'querystring';
 import axios from 'axios';
 import uid from 'uid-promise';
 
-
 // https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/
 // "Note: Your OAuth App can request the scopes in the initial redirection. You can specify multiple
 // scopes by separating them with a space". Ex: 'repo gist'
@@ -33,7 +32,6 @@ const scope = 'repo';
 // state. Use a Date()?
 const states: string[] = [];
 const statesMaxLength = 10000; // A big number. May be changed.
-
 
 
 
@@ -80,8 +78,6 @@ async function login(req: NowRequest, res: NowResponse) {
 
   redirect(res, `https://github.com/login/oauth/authorize`, query);
 };
-
-
 
 async function callback(req: NowRequest, res: NowResponse) {
   const { code, state } = req.query;
