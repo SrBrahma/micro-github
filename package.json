@@ -4,14 +4,14 @@
   "description": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mxstbr/micro-github.git"
+    "url": "git+https://github.com/SrBrahma/micro-github"
   },
-  "author": "Max Stoiber <contact@mxstbr.com> (http://mxstbr.com/). Changed a lot by Henrique Bruno <henrique.bruno.fa@gmail.com>.",
+  "author": "Max Stoiber <contact@mxstbr.com> (http://mxstbr.com/). Changed a lot by Henrique Bruno (aka SrBrahma) <henrique.bruno.fa@gmail.com>.",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/mxstbr/micro-github/issues"
   },
-  "homepage": "https://github.com/mxstbr/micro-github.git#readme",
+  "homepage": "https://github.com/SrBrahma/micro-github#readme",
   "dependencies": {
     "axios": "^0.15.3",
     "dotenv": "^8.2.0",

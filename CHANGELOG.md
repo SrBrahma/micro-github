@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 # SrBrahma fork
 
-## [2.0.0] - May 21, 2020
+## [2.0.0] - May 24, 2020
 
 Removed allow_signup option. Now always true.
 

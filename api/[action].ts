@@ -2,6 +2,11 @@
 // GH_CLIENT_ID
 // GH_CLIENT_SECRET
 
+// TODO: Add a major version system for easier changes.
+// TODO: Something like this in state:
+// [random string]_p[port: number]_v[version: number]
+
+
 require('dotenv').config(); // dotEnv used on development mode, getting the env vars from .env file.
 import { NowRequest, NowResponse } from '@now/node';
 import querystring from 'querystring';
@@ -40,7 +45,8 @@ function redirect(res: NowResponse, location: string, bodyObj?: any) {
 
 
 function redirectToUser(res: NowResponse, bodyObj: any, port: number) {
-  //TODO: After ~15 jun, remove the '/oauthCallback'.
+  //TODO: After ~1 july, remove the '/oauthCallback'.
+  // The user should already have the extension updated to allow callback to '/'.
   redirect(res, `http://localhost:${port}/oauthCallback`, bodyObj);
 };
 
@@ -49,14 +55,14 @@ function redirectToUser(res: NowResponse, bodyObj: any, port: number) {
 async function login(req: NowRequest, res: NowResponse) {
   let { redirectPort: redirectPortString } = req.query;
 
-  //TODO: Remove this after ~15 jun. Is just a "migration". And change above to const.
+  //TODO: Remove this after ~1 july. Is just a "migration". And change above to const.
   if (!redirectPortString)
     redirectPortString = "60002";
 
   let redirectPort = Number(redirectPortString); // If undefined, returns NaN
 
   if (redirectPort < 0 || redirectPort > 65535 || !Number.isInteger(redirectPort)) // If NaN, isNotInteger.
-    return errorPage(res, 'Invalid or missing redirect port.');
+    return errorPage(res, 'Login Error 1: Invalid or missing redirect port.');
 
 
   // To avoid the Vercel RAM exploding, if callbacks doesn't happen for a reason (aka evil users hehe)
@@ -81,13 +87,13 @@ async function callback(req: NowRequest, res: NowResponse) {
   const { code, state } = req.query;
 
   if (Array.isArray(code) || Array.isArray(state) || !code || !state)
-    return errorPage(res, 'Error 1: Invalid query');
+    return errorPage(res, 'Callback Error 1: Invalid query');
 
   // Find the state in states array
   const stateIndex = states.indexOf(state);
 
   if (stateIndex == -1)
-    return errorPage(res, 'Error 2: State not found');
+    return errorPage(res, 'Callback Error 2: State not found');
 
   // Remove the state from states array
   states.splice(stateIndex, 1);
@@ -108,17 +114,17 @@ async function callback(req: NowRequest, res: NowResponse) {
     if (status === 200) {
       const qs = querystring.parse(data);
       if (qs.error) {
-        return errorPage(res, 'Error 3: ' + String(qs.error_description));
+        return errorPage(res, 'Callback Error 3: ' + String(qs.error_description));
       } else {
         const port = Number(state.split('_')[1]);
         return redirectToUser(res, { token: qs.access_token }, port);
       }
     } else {
-      return errorPage(res, 'Error 4: GitHub server error');
+      return errorPage(res, 'Callback Error 4: GitHub server error');
     }
   }
   catch (err) {
-    return errorPage(res, 'Error 5: An uknown error occurred, maybe GitHub server is down right now');
+    return errorPage(res, 'Callback Error 5: An uknown error occurred, maybe GitHub server is down right now');
   }
 };
 
@@ -133,8 +139,6 @@ module.exports = (req: NowRequest, res: NowResponse) => {
       login(req, res); break;
     case 'callback':
       callback(req, res); break;
-    case 'test':
-      res.send([process.env.GH_CLIENT_ID, process.env.GH_CLIENT_SECRET]);
   }
 };
 
