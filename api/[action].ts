@@ -16,7 +16,7 @@ import uid from 'uid-promise';
 // https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/
 // "Note: Your OAuth App can request the scopes in the initial redirection. You can specify multiple
 // scopes by separating them with a space". Ex: 'repo gist'
-const scope = 'repo';
+const scope = 'repo read:org';
 
 
 // state format is uidString_customRedirectPort.
